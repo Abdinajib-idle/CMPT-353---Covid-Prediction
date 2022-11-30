@@ -44,3 +44,30 @@ pop_df = data.pivot(index='GEO', columns='REF_DATE', values='VALUE').reset_index
 pop_df.columns = ['GEOGRAPHY', '2020-Q1', '2020-Q2', '2020-Q3', '2020-Q4', '2021-Q1', '2021-Q2', '2021Q3', '2021Q4',
                   '2022-Q1', '2022-Q2', '2022-Q3']
 
+
+# -- cleaning and getting data from population-count.csv
+# vaccine columns = [province, numtotal_atleast1dose, numtotal_fully, year, quarter]
+
+vaccinationCoverage = pd.read_csv('./inputs/vaccination-coverage-map.csv', parse_dates=['week_end'])
+# print(vaccinationCoverage)
+
+# Change column name to 'week_end' to 'province'
+vaccinationCoverage = vaccinationCoverage.rename(
+    columns={'prename':'province'})
+
+# Keep columns = [province, quarter, year, numtotal_atleast1dose, numtotal_fully]
+vaccinationCoverage = vaccinationCoverage.filter(
+    items=['province', 'week_end', 'numtotal_atleast1dose', 'numtotal_fully'])
+
+# Excludes 'Canada' in province column
+vaccinationCoverage  = vaccinationCoverage[vaccinationCoverage['province'] != 'Canada']
+
+# Extract year
+vaccinationCoverage['year'] = pd.DatetimeIndex(vaccinationCoverage['week_end']).year
+
+# Extract quarters
+vaccinationCoverage['quarter'] = vaccinationCoverage.week_end.dt.quarter
+
+vaccinationCoverage = vaccinationCoverage.drop(columns=['week_end'])
+
+print("end of function")
