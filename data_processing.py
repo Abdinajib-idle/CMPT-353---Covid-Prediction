@@ -14,6 +14,9 @@ def month_to_quarter(month):
         return 4
 
 
+
+######################### COVID CASES COUNT #########################
+#####################################################################
 input_cases = pd.read_csv("inputs/covid-19-case-count.csv")
 
 # remove rows where province name is Canada and Repatriated travellers
@@ -24,6 +27,10 @@ cases.rename(columns={"prname": "province", "reporting_year": "year"}, inplace=T
 cases['month'] = pd.DatetimeIndex(cases['date']).month
 cases['quarter'] = cases.apply(lambda x: month_to_quarter(x.month), axis=1)
 cleaned_cases = cases[['province', 'quarter', 'year', 'totalcases', 'numtotal_last7', 'numdeaths', 'numdeaths_last7']]
+cleaned_cases = cleaned_cases.sort_values(by=['province'])
+
+# Group covid cases data by province, year, quarter and sum the cases
+cleaned_cases = cleaned_cases.groupby(['province', 'year', 'quarter']).sum().reset_index()
 
 # -- cleaning and getting data from population-count.csv
 
@@ -43,8 +50,10 @@ cleaned_cases = cases[['province', 'quarter', 'year', 'totalcases', 'numtotal_la
 # pop_df.columns = ['GEOGRAPHY', '2020-Q1', '2020-Q2', '2020-Q3', '2020-Q4', '2021-Q1', '2021-Q2', '2021Q3', '2021Q4',
 #                   '2022-Q1', '2022-Q2', '2022-Q3']
 
+
+######################### POPULATION COUNT #########################
+####################################################################
 populationCount = pd.read_csv('./inputs/population_count.csv', parse_dates=['REF_DATE'])
-# print(populationCount)
 populationCount = populationCount.filter(items=['REF_DATE', 'GEO', 'VALUE'])
 populationCount = populationCount.rename(columns={'GEO': 'province', 'VALUE': 'population'})
 populationCount = populationCount[populationCount['province'] != 'Canada']
@@ -52,32 +61,41 @@ populationCount['year'] = pd.DatetimeIndex(populationCount['REF_DATE']).year
 populationCount['quarter'] = populationCount.REF_DATE.dt.quarter
 populationCount = populationCount.drop(columns=['REF_DATE'])
 
+# Group population data by province, year, quarter and sum population
+populationCount = populationCount.groupby(['province', 'year', 'quarter']).sum().reset_index()
 # -- cleaning and getting data from population-count.csv
 # vaccine columns = [province, numtotal_atleast1dose, numtotal_fully, year, quarter]
 
-vaccinationCoverage = pd.read_csv('./inputs/vaccination-coverage-map.csv', parse_dates=['week_end'])
-# print(vaccinationCoverage)
 
+######################### VACCINATION COVERAGE MAP #########################
+############################################################################
+vaccinationCoverage = pd.read_csv('./inputs/vaccination-coverage-map.csv', parse_dates=['week_end'])
 # Change column name to 'week_end' to 'province'
 vaccinationCoverage = vaccinationCoverage.rename(
     columns={'prename':'province'})
-
 # Keep columns = [province, quarter, year, numtotal_atleast1dose, numtotal_fully]
 vaccinationCoverage = vaccinationCoverage.filter(
     items=['province', 'week_end', 'numtotal_atleast1dose', 'numtotal_fully'])
-
 # Excludes 'Canada' in province column
 vaccinationCoverage  = vaccinationCoverage[vaccinationCoverage['province'] != 'Canada']
-
 # Extract year
 vaccinationCoverage['year'] = pd.DatetimeIndex(vaccinationCoverage['week_end']).year
-
 # Extract quarters
 vaccinationCoverage['quarter'] = vaccinationCoverage.week_end.dt.quarter
+vaccinationCoverage = vaccinationCoverage.drop(columns=['week_end']).sort_values(by=['province'])
+# vaccinationCoverage = vaccinationCoverage[(vaccinationCoverage['quarter'] == 1) & (vaccinationCoverage['year'] == 2021)]
 
-vaccinationCoverage = vaccinationCoverage.drop(columns=['week_end'])
+# Group vaccination data by province, year, quarter and sum vaccinations
+vaccinationCoverage.to_csv('vaccinationbeforegroup.csv')
+vaccinationCoverage = vaccinationCoverage.groupby(['province', 'year', 'quarter']).agg('sum').reset_index()
+vaccinationCoverage.to_csv('vaccinationaftergroup.csv')
+
 
 print("end of function")
 print(cleaned_cases)
 print(populationCount)
 print(vaccinationCoverage)
+
+final_data = 
+
+
