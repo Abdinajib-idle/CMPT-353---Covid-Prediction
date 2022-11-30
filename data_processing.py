@@ -25,25 +25,32 @@ cases['month'] = pd.DatetimeIndex(cases['date']).month
 cases['quarter'] = cases.apply(lambda x: month_to_quarter(x.month), axis=1)
 cleaned_cases = cases[['province', 'quarter', 'year', 'totalcases', 'numtotal_last7', 'numdeaths', 'numdeaths_last7']]
 
-
 # -- cleaning and getting data from population-count.csv
 
 # RETURN: population columns = [province/GEO, quarter, year, population]
-data = pd.read_csv('../353-project-covid-predictions/inputs/population_count.csv', index_col='REF_DATE').reset_index()
+# data = pd.read_csv('../353-project-covid-predictions/inputs/population_count.csv', index_col='REF_DATE').reset_index()
 
-# drop all unwanted columns
-data.drop(
-    ['DGUID', 'UOM', 'UOM_ID', 'SCALAR_FACTOR', 'SCALAR_ID', 'VECTOR', 'COORDINATE', 'SYMBOL', 'TERMINATED', 'DECIMALS',
-     'STATUS'], axis=1, inplace=True)
-# Convert year-month to quarter
-data['REF_DATE'] = pd.PeriodIndex(data.REF_DATE, freq='Q')
+# # drop all unwanted columns
+# data.drop(
+#     ['DGUID', 'UOM', 'UOM_ID', 'SCALAR_FACTOR', 'SCALAR_ID', 'VECTOR', 'COORDINATE', 'SYMBOL', 'TERMINATED', 'DECIMALS',
+#      'STATUS'], axis=1, inplace=True)
+# # Convert year-month to quarter
+# data['REF_DATE'] = pd.PeriodIndex(data.REF_DATE, freq='Q')
 
-# Transpose the quarter column and make value column the values
-pop_df = data.pivot(index='GEO', columns='REF_DATE', values='VALUE').reset_index()
-# Rename all the columns
-pop_df.columns = ['GEOGRAPHY', '2020-Q1', '2020-Q2', '2020-Q3', '2020-Q4', '2021-Q1', '2021-Q2', '2021Q3', '2021Q4',
-                  '2022-Q1', '2022-Q2', '2022-Q3']
+# # Transpose the quarter column and make value column the values
+# pop_df = data.pivot(index='GEO', columns='REF_DATE', values='VALUE').reset_index()
+# # Rename all the columns
+# pop_df.columns = ['GEOGRAPHY', '2020-Q1', '2020-Q2', '2020-Q3', '2020-Q4', '2021-Q1', '2021-Q2', '2021Q3', '2021Q4',
+#                   '2022-Q1', '2022-Q2', '2022-Q3']
 
+populationCount = pd.read_csv('./inputs/population_count.csv', parse_dates=['REF_DATE'])
+# print(populationCount)
+populationCount = populationCount.filter(items=['REF_DATE', 'GEO', 'VALUE'])
+populationCount = populationCount.rename(columns={'GEO': 'province', 'VALUE': 'population'})
+populationCount = populationCount[populationCount['province'] != 'Canada']
+populationCount['year'] = pd.DatetimeIndex(populationCount['REF_DATE']).year
+populationCount['quarter'] = populationCount.REF_DATE.dt.quarter
+populationCount = populationCount.drop(columns=['REF_DATE'])
 
 # -- cleaning and getting data from population-count.csv
 # vaccine columns = [province, numtotal_atleast1dose, numtotal_fully, year, quarter]
@@ -71,3 +78,6 @@ vaccinationCoverage['quarter'] = vaccinationCoverage.week_end.dt.quarter
 vaccinationCoverage = vaccinationCoverage.drop(columns=['week_end'])
 
 print("end of function")
+print(cleaned_cases)
+print(populationCount)
+print(vaccinationCoverage)
