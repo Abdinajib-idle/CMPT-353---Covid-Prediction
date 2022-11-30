@@ -23,5 +23,3 @@ cases['month'] = pd.DatetimeIndex(cases['date']).month
 cases['quarter'] = cases.apply(lambda x: month_to_quarter(x.month), axis=1)
 cleaned_cases = cases[['province', 'quarter', 'year', 'totalcases', 'numtotal_last7', 'numdeaths', 'numdeaths_last7']]
 
-# save new csv of needed data
-cleaned_cases.to_csv("inputs/cleaned-covid-19-case-count.csv")
