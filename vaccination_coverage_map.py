@@ -3,7 +3,7 @@ import numpy as np
 import datetime as dt
 
 # Vaccination coverage map
-# vaccine columns = [province, quarter, year, numtotal_atleast1dose, numtotal_fully]
+# vaccine columns = [province, numtotal_atleast1dose, numtotal_fully, year, quarter]
 
 vaccinationCoverage = pd.read_csv('./inputs/vaccination-coverage-map.csv', parse_dates=['week_end'])
 # print(vaccinationCoverage)
