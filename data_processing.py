@@ -96,6 +96,6 @@ print(cleaned_cases)
 print(populationCount)
 print(vaccinationCoverage)
 
-final_data = 
+# final_data = 
 
 
