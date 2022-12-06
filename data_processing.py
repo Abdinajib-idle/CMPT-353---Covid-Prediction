@@ -94,6 +94,7 @@ final_data = pd.merge(final_data, vaccinationCoverage, on=['province', 'year', '
 final_data['vaccination_score_atleast1dose'] = final_data['numtotal_atleast1dose'] / final_data['population']
 final_data['vaccination_score_fully'] = final_data['numtotal_fully'] / final_data['population']
 
+final_data.to_csv('inputs/processed-data.csv')
 print(final_data)
 
 
