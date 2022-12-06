@@ -23,35 +23,20 @@ input_cases = pd.read_csv("inputs/covid-19-case-count.csv")
 updated = input_cases['update'] == 1
 cases = input_cases[updated]
 
-cases.rename(columns={"prname": "province", "reporting_year": "year"}, inplace=True)
+cases.rename(columns={"prname": "province"}, inplace=True)
 cases['month'] = pd.DatetimeIndex(cases['date']).month
+cases['year'] = pd.DatetimeIndex(cases['date']).year
 cases['quarter'] = cases.apply(lambda x: month_to_quarter(x.month), axis=1)
-cleaned_cases = cases[['province', 'quarter', 'year', 'totalcases', 'numtotal_last7', 'numdeaths', 'numdeaths_last7']]
-cleaned_cases = cleaned_cases.sort_values(by=['province'])
+cleaned_cases = cases[['date','province', 'quarter', 'year', 'totalcases', 'numdeaths']]
+cleaned_cases.sort_values(by=['date','province', 'year', 'quarter'], inplace=True)
 
-# Group covid cases data by province, year, quarter and sum the cases
-cleaned_cases = cleaned_cases.groupby(['province', 'year', 'quarter']).sum().reset_index()
-# cleaned_cases.to_csv('cleaned.csv')
+#  we can see that the totalcases is accumulative, \
+# meaning the total cases of a province is the latest date within the quarter, and also the largest number within a quarter
+cleaned_cases['lastdate_in_quarter'] = cleaned_cases.groupby(['province', 'year', 'quarter'])['date'].transform(max)
+cleaned_cases = cleaned_cases[cleaned_cases['lastdate_in_quarter'] == cleaned_cases['date']]
+cleaned_cases = cleaned_cases.drop(columns=['date', 'lastdate_in_quarter'])
+cleaned_cases.sort_values(by=['province', 'year', 'quarter'], inplace=True)
 
-# -- cleaning and getting data from population-count.csv
-# RETURN: population columns = [province/GEO, quarter, year, population]
-# data = pd.read_csv('../353-project-covid-predictions/inputs/population_count.csv', index_col='REF_DATE').reset_index()
-
-# # drop all unwanted columns
-# data.drop(
-#     ['DGUID', 'UOM', 'UOM_ID', 'SCALAR_FACTOR', 'SCALAR_ID', 'VECTOR', 'COORDINATE', 'SYMBOL', 'TERMINATED', 'DECIMALS',
-#      'STATUS'], axis=1, inplace=True)
-# # Convert year-month to quarter
-# data['REF_DATE'] = pd.PeriodIndex(data.REF_DATE, freq='Q')
-
-# # Transpose the quarter column and make value column the values
-# pop_df = data.pivot(index='GEO', columns='REF_DATE', values='VALUE').reset_index()
-# # Rename all the columns
-# pop_df.columns = ['GEOGRAPHY', '2020-Q1', '2020-Q2', '2020-Q3', '2020-Q4', '2021-Q1', '2021-Q2', '2021Q3', '2021Q4',
-#                   '2022-Q1', '2022-Q2', '2022-Q3']
-
-# -- cleaning and getting data from population-count.csv
-# vaccine columns = [province, numtotal_atleast1dose, numtotal_fully, year, quarter]
 
 
 ######################### POPULATION COUNT #########################
@@ -67,12 +52,13 @@ populationCount = populationCount[populationCount['province'] != 'Canada']
 populationCount['year'] = pd.DatetimeIndex(populationCount['REF_DATE']).year
 # Extract only quarter from REF_DATE colum
 populationCount['quarter'] = populationCount.REF_DATE.dt.quarter
-# Remove REF_DATE column
-populationCount = populationCount.drop(columns=['REF_DATE'])
-# Group population data by province, year, quarter and sum population
-populationCount = populationCount.groupby(['province', 'year', 'quarter']).sum().reset_index()
-# populationCount.to_csv('population.csv')
 
+populationCount['lastdate_in_quarter'] = populationCount.groupby(['province', 'year', 'quarter'])['REF_DATE'].transform(max)
+populationCount = populationCount[populationCount['lastdate_in_quarter'] == populationCount['REF_DATE']]
+populationCount.sort_values(by=['province', 'year', 'quarter'], inplace=True)
+
+# Remove REF_DATE, lastdate_in_quarter columns
+populationCount = populationCount.drop(columns=['REF_DATE', 'lastdate_in_quarter'])
 
 
 ######################### VACCINATION COVERAGE MAP #########################
@@ -90,27 +76,24 @@ vaccinationCoverage  = vaccinationCoverage[vaccinationCoverage['province'] != 'C
 vaccinationCoverage['year'] = pd.DatetimeIndex(vaccinationCoverage['week_end']).year
 # Extract quarters
 vaccinationCoverage['quarter'] = vaccinationCoverage.week_end.dt.quarter
-vaccinationCoverage = vaccinationCoverage.drop(columns=['week_end']).sort_values(by=['province'])
-# Group vaccination data by province, year, quarter and sum vaccinations
-# vaccinationCoverage.to_csv('vaccinationbeforegroup.csv')
-vaccinationCoverage = vaccinationCoverage.groupby(['province', 'year', 'quarter']).agg('sum').reset_index()
-# vaccinationCoverage.to_csv('vaccinationaftergroup.csv')
 
+vaccinationCoverage['lastdate_in_quarter'] = vaccinationCoverage.groupby(['province', 'year', 'quarter'])['week_end'].transform(max)
+vaccinationCoverage = vaccinationCoverage[vaccinationCoverage['lastdate_in_quarter'] == vaccinationCoverage['week_end']]
+vaccinationCoverage.sort_values(by=['province', 'year', 'quarter'], inplace=True)
 
-print("end of function")
-print(cleaned_cases)
-print(populationCount)
-print(vaccinationCoverage)
+vaccinationCoverage = vaccinationCoverage.drop(columns=['week_end', 'lastdate_in_quarter']).sort_values(by=['province'])
 
 
 ######################### FINAL TABLE #########################
 ###############################################################
 # Join covid cases table with population table by province, year and quarter
 final_data = pd.merge(cleaned_cases, populationCount, on=['province', 'year', 'quarter'], how='left')
-# final_data.to_csv('final1.csv')
 # Join covid cases, population and vaccination table by province, year and quarter
 final_data = pd.merge(final_data, vaccinationCoverage, on=['province', 'year', 'quarter'], how='left')
-# final_data.to_csv('final2.csv')
+
+final_data['vaccination_score_atleast1dose'] = final_data['numtotal_atleast1dose'] / final_data['population']
+final_data['vaccination_score_fully'] = final_data['numtotal_fully'] / final_data['population']
+
 print(final_data)
 
 
