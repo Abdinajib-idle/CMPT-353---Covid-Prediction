@@ -172,7 +172,7 @@ plt.savefig("graphs/death-cases-by-time-scatter")
 # plt.savefig("graphs/deaths-case-bar-graph.png")
 #
 #
-# # # --- BAR GRAPH -- Comparison of Average New Province Infections Relative to Population in early 2020 (before vaccinations came out in Canada) and late 2022 ------------------------
+# # # --- BAR GRAPH -- Comparison of Average New Province Infections Relative to Population in early 2020 (before vaccinations came out in Canada) and 2022 ------------------------
 
 #
 # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 7), constrained_layout=True)
