@@ -61,8 +61,9 @@ populationCount['month'] = pd.DatetimeIndex(populationCount['REF_DATE']).month
 populationCount['lastdate_in_quarter'] = populationCount.groupby(['province', 'year', 'month'])['REF_DATE'].transform(max)
 populationCount = populationCount[populationCount['lastdate_in_quarter'] == populationCount['REF_DATE']]
 populationCount.sort_values(by=['province', 'year', 'month'], inplace=True)
+# populationCount = populationCount.rename(columns={'REF_DATE': 'date'})
 # Remove REF_DATE, lastdate_in_quarter columns
-populationCount = populationCount.drop(columns=['REF_DATE', 'lastdate_in_quarter'])
+populationCount = populationCount.drop(columns=['REF_DATE', 'lastdate_in_quarter']).reset_index()
 # populationCount.to_csv('population.csv')
 
 
@@ -104,5 +105,5 @@ fill_pop = final_data['population'].fillna(method='ffill')
 final_data['population'] = fill_pop
 # Exclude months without covid vaccinations
 final_data = final_data[final_data['numtotal_atleast1dose'] >= 0]
-
+# final_data['date'] = final_data.apply(lambda x: fill_dates(final_data['month'], final_data['year']), axis=1)
 final_data.to_csv('inputs/processed-data-monthly.csv')
