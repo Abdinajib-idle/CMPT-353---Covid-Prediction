@@ -28,7 +28,7 @@ def score_polyfit(n):
 
 def score_linear(X, y, text):
     model = LinearRegression().fit(X, y)
-    print('Linear Regression train score=%.5g, valid score=%.5g' 
+    print('Linear Regression train score=%.5g, valid score=%.5g'
             % (model.score(X_train, y_train), model.score(X_valid, y_valid)), text)
 
 def fill_dates(month, year):
@@ -102,7 +102,7 @@ poly = PolynomialFeatures(degree=6, include_bias=True)
 X_poly = poly.fit_transform(X)
 model = LinearRegression()
 model.fit(X_poly, y)
-print("Polynomial Regression degree 3 score (1 DOSE/DEATHS): ", model.score(X_poly, y))
+print("Polynomial Regression degree 6 score (1 DOSE/DEATHS): ", model.score(X_poly, y), "\n")
 
 # Polynomial Regression of degree n
 # score_polyfit(3)
@@ -154,7 +154,7 @@ poly = PolynomialFeatures(degree=6, include_bias=True)
 X_poly = poly.fit_transform(X)
 model = LinearRegression()
 model.fit(X_poly, y)
-print("Polynomial Regression degree 6 score: ", model.score(X_poly, y))
+print("Polynomial Regression degree 6 score (COVID CASES/DEATH): ", model.score(X_poly, y), "\n")
 
 # Polynomial Regression of degree n
 # score_polyfit(3)
