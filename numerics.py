@@ -2,7 +2,7 @@ import pandas as pd
 from scipy import stats
 
 
-data = pd.read_csv("inputs/processed-data.csv").reset_index(drop=True).dropna()
+data = pd.read_csv("inputs/processed-data-numerics.csv").reset_index(drop=True).dropna()
 
 data = data.drop(data.columns[[0]], axis=1)  # drops the extra index column
 

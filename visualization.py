@@ -12,7 +12,7 @@ def get_new_data_by_month(col_name, data, df):
 
 
 # (1) --- process data further
-data = pd.read_csv("inputs/processed-data-monthly.csv")
+data = pd.read_csv("inputs/processed-data-visualization.csv")
 data.drop(columns=['Unnamed: 0'], inplace=True)
 
 # --- get number of new cases/deaths/population/vaccinations during a month
