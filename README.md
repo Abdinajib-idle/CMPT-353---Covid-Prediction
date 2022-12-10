@@ -2,19 +2,12 @@
 
 The coronavirus “COVID-19” has deeply impacted society in regard to many aspects such as culture and population count. The Covid-19 pandemic is a global health crisis that has upended the way of life for people all over the world. It has caused unprecedented levels of disruption to industries, economies, and social structures. Health experts have identified a wide range of symptoms and risk factors associated with the virus, and have recommended preventative measures such as social distancing, regular handwashing, and wearing face masks aside from getting vaccinated. While the global response to the pandemic has been varied, much of the world has adopted similar public health approaches to try to contain its spread. What made COVID-19 particularly significant in contrast to other viruses is that it was highly transmissive and especially fatal to certain demographics. With researchers scrambling to procure a vaccine in efforts of mitigating damages dealt by the virus, a question follows suit. What is the efficacy of the vaccine in terms of decreasing COVID-19 infection counts or death counts within a Canadian population?  This project aims to address the question through data analytics and statistics.
 
-## Set up
-This project is a Python project that uses the pandas, scipy, seaborn, and matplotlib libraries. Pandas is a powerful data manipulation library that allows for easy data cleaning and analysis. Scipy is a library for scientific computing in Python, and matplotlib is a plotting library for creating visualizations of data. Seaborn is built on matplotlib, and is used to create nice graphs.
+There are **three capabilities** in this project:
+1. **Visualization** - generate various graphed data images for intepretation of what's behind the data and make comparisons by province, case count, death count, time, and vaccination
+2. **Numerics** - find correlation between infection cases, vaccination, deaths, and perform statistical testing
+3. **Predictions** - Use current data to predict death count relative to number of cases and vaccination
 
-To use this project, you will need to have Python installed on your machine. You can check if you already have Python installed by running the following command in your terminal:
-`python --version`
-If you don't have Python installed, you can download it from the [official Python website](https://www.python.org/).
-
-You can install the needed packages by opening a terminal and running the following command.
-```bash
-pip install -r requirements.txt
-```
-
-Once the libraries are installed, you can start using the project by each individual file
+Each capability needs to have input files processed by running its specific `data-proccessing-<capability>.py` script, and run the task by running the specific script named by capability. Each capablity can be run independently of the other capabilities.
 
 The project contains the following files:
 
@@ -28,20 +21,61 @@ The project contains the following files:
 * `numerics.py`: A python script containing code to perform statistical tests on the merged dataframes and produces results for correlation between the variables.
 * `predictions.py`: A python script to train various models and make predictions of trends.
 
+### Input files:
+* covid-19-case-count.csv
+* population_count.csv 
+* vaccination-coverage-map.csv
 
-## Generate Graphs
+### Output files:
+#### Processed data files 
+* processed-data-numerics.csv
+* processed-data-predictions.csv
+* processed-data-visualization.csv
+* visualization-data-monthly.csv
+
+#### Graphed Data 
+* case-pop-bar-graph.png
+* cases-by-time.png
+* death-cases-by-time-scatter.png
+* death-case-bar-graph.png
+* vaccination-by-time.png
+* linreg-0.png
+* linreg-1.png
+* linreg-2.pmg
+
+#### Prediction Graphs
+* 1dose-deaths.png
+* totalcases-deaths.png
+
+## Set Up
+This project is a Python project that uses various packages such as pandas, scipy, seaborn, and matplotlib libraries. Pandas is a powerful data manipulation library that allows for easy data cleaning and analysis. Scipy is a library for scientific computing in Python, and matplotlib is a plotting library for creating visualizations of data. Seaborn is built on matplotlib, and is used to create nice graphs.
+
+To use this project, you will need to have Python installed on your machine. You can check if you already have Python installed by running the following command in your terminal:
+`python --version`
+If you don't have Python installed, you can download it from the [official Python website](https://www.python.org/).
+
+You can install the needed packages by opening a terminal and running the following command.
+```bash
+pip install -r requirements.txt
+```
+
+Once the libraries are installed, you can start using the project by running a capability.
+
+## Capablities
+
+### Visualization - Generate Graphed Data
 Run the `data_processing_visualization.py` script to process data files.
 Next, run the `visualization.py` script to further process the data and generate graphs.
 There are 8 graphs that can be generated. To ensure the graphs are generated properly, ensure you do not generate
 the first 3 graphs at the same time (cases-by-time, death-cases-by-time-scatter,vaccination-by-time). Please comment out 
 2 of the 3 before proceeding. The rest of the graphs can be generated as normal.
 
-## Perform statistical tests
+### Numerics - Perform statistical tests
 Run the `data_processing_numerics.py` script to process data files.
 Run the `numerics.py` script to perform statistical tests.
 
-## Make predictions
+### Predictions - Predict using Machine Learning
 Run the `data_processing_predictions.py` script to process data files.
-Run the `predictions.py` script to make predictions.
+Run the `predictions.py` script to make predictions and generate resulting predictions.
 
 Thank you for using this project!
