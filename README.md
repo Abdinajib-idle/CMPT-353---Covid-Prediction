@@ -31,6 +31,10 @@ There are 8 graphs that can be generated. To ensure the graphs are generated pro
 the first 3 graphs at the same time (cases-by-time, death-cases-by-time-scatter,vaccination-by-time). Please comment out 
 2 of the 3 before proceeding. The rest of the graphs can be generated as normal.
 
+## Perform statistical tests
+Run the `data_processing.py` script to process data files.
+Run the `numerics.py` script to perform statistical tests.
+
 Thank you for using this project!
 
 
