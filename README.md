@@ -37,8 +37,3 @@ Run the `data_processing.py` script to process data files.
 Run the `numerics.py` script to perform statistical tests.
 
 Thank you for using this project!
-
-
-
-
-g
