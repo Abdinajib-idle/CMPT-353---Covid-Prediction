@@ -78,4 +78,9 @@ Run the `numerics.py` script to perform statistical tests.
 Run the `data_processing_predictions.py` script to process data files.
 Run the `predictions.py` script to make predictions and generate resulting predictions.
 
+## Contributors:
+1. Abdinajib Idle
+2. Amy Cao
+3. Jiahua wu
+
 Thank you for using this project!
