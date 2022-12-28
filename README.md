@@ -7,7 +7,7 @@ There are **three capabilities** in this project:
 2. **Numerics** - find correlation between infection cases, vaccination, deaths, and perform statistical testing
 3. **Predictions** - Use current data to predict death count relative to number of cases and vaccination
 
-Each capability needs to have input files processed by running its specific `data-proccessing-<capability>.py` script, and run the task by running the specific script named by capability. Each capablity can be run independently of the other capabilities.
+Each capability needs to have input files processed by running its specific `data-proccessing.py` script, and run the task by running the specific script named by capability. Each capablity can be run independently of the other capabilities.
 
 The project contains the following files:
 
